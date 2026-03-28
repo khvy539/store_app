@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h4>ユーザー承認</h4>
+
+{% for u in users %}
+<div class="card bg-secondary text-white mb-2">
+  <div class="card-body d-flex justify-content-between">
+    <span>{{ u[1] }}</span>
+    <a href="/approve_user/{{ u[0] }}" class="btn btn-warning btn-sm">承認</a>
+  </div>
+</div>
+{% endfor %}
+
+{% endblock %}

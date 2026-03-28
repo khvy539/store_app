@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h4>商品追加</h4>
+
+<form method="post">
+  <input name="name" class="form-control mb-2" placeholder="商品名">
+  <input name="stock" class="form-control mb-2" placeholder="在庫">
+  <input name="threshold" class="form-control mb-3" placeholder="基準値">
+
+  <button class="btn btn-primary w-100">追加</button>
+</form>
+
+{% endblock %}

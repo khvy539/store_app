@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="mx-auto" style="max-width:400px;">
+  <h4 class="text-center mb-3">ユーザー登録</h4>
+
+  <form method="post">
+    <input name="username" class="form-control mb-2" placeholder="ユーザー名">
+    <input name="password" type="password" class="form-control mb-3" placeholder="パスワード">
+
+    <button class="btn btn-success w-100">登録</button>
+  </form>
+</div>
+
+{% endblock %}

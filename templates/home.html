@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-grid gap-3">
+
+  <a href="/inventory" class="btn btn-primary btn-lg">📦 在庫管理</a>
+  <a href="/shift" class="btn btn-success btn-lg">🗓 シフト管理</a>
+
+  {% if session["role"] == "admin" %}
+  <a href="/approve" class="btn btn-warning btn-lg">👤 ユーザー承認</a>
+  {% endif %}
+
+  <a href="/logout" class="btn btn-outline-light">ログアウト</a>
+
+</div>
+
+{% endblock %}

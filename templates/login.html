@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="mx-auto" style="max-width:400px;">
+  <h4 class="text-center mb-3">ログイン</h4>
+
+  <form method="post">
+    <input name="username" class="form-control mb-2" placeholder="ユーザー名">
+    <input name="password" type="password" class="form-control mb-3" placeholder="パスワード">
+
+    <button class="btn btn-primary w-100">ログイン</button>
+  </form>
+
+  <a href="/register" class="d-block text-center mt-3">新規登録</a>
+</div>
+
+{% endblock %}
