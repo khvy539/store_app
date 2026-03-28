@@ -1,5 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
-from flask import flash
+from flask import Flask, render_template, request, redirect, session, flash
 import sqlite3, os
 
 app = Flask(__name__)
@@ -15,6 +14,7 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT,
         password TEXT,
+        name TEXT,
         role TEXT,
         approved INTEGER DEFAULT 0
     );
@@ -37,8 +37,7 @@ def init_db():
     """)
     db.commit()
 
-    # 初期管理者（承認済）
-    db.execute("INSERT OR IGNORE INTO users (id, username, password, role, approved) VALUES (1, 'admin', 'admin', 'admin', 1)")
+    db.execute("INSERT OR IGNORE INTO users VALUES (1,'admin','admin','管理者','admin',1)")
     db.commit()
     db.close()
 
@@ -54,12 +53,17 @@ def login():
         db.close()
 
         if user:
-            if user[4] == 1:
+            if user[5] == 1:
                 session["user_id"] = user[0]
-                session["role"] = user[3]
+                session["role"] = user[4]
+                flash("ログイン成功", "success")
                 return redirect("/")
             else:
-                return "承認待ちです"
+                flash("承認待ちです", "warning")
+                return redirect("/login")
+
+        flash("ログイン失敗", "danger")
+        return redirect("/login")
 
     return render_template("login.html")
 
@@ -69,11 +73,14 @@ def register():
     if request.method == "POST":
         db = get_db()
         db.execute(
-            "INSERT INTO users (username, password, role, approved) VALUES (?, ?, ?, ?)",
-            (request.form["username"], request.form["password"], "user", 0)
+            "INSERT INTO users (username, password, name, role, approved) VALUES (?, ?, ?, ?, ?)",
+            (request.form["username"], request.form["password"],
+             request.form["name"], "user", 0)
         )
         db.commit()
         db.close()
+
+        flash("登録申請しました（承認待ち）", "success")
         return redirect("/login")
 
     return render_template("register.html")
@@ -100,12 +107,13 @@ def inventory():
     db = get_db()
     products = db.execute("SELECT * FROM products").fetchall()
     db.close()
+
     return render_template("inventory.html", products=products)
 
 @app.route("/add_product", methods=["GET","POST"])
 def add_product():
     if session.get("role") != "admin":
-        return "権限がありません"
+        return "権限なし"
 
     if request.method == "POST":
         db = get_db()
@@ -115,6 +123,8 @@ def add_product():
         )
         db.commit()
         db.close()
+
+        flash("商品追加しました", "success")
         return redirect("/inventory")
 
     return render_template("add_product.html")
@@ -129,7 +139,7 @@ def shift():
 
     if session["role"] == "admin":
         shifts = db.execute("""
-            SELECT shifts.*, users.username
+            SELECT shifts.*, users.name
             FROM shifts
             JOIN users ON shifts.user_id = users.id
         """).fetchall()
@@ -156,6 +166,8 @@ def add_shift():
         )
         db.commit()
         db.close()
+
+        flash("シフト登録しました", "success")
         return redirect("/shift")
 
     return render_template("add_shift.html")
@@ -169,6 +181,7 @@ def approve():
     db = get_db()
     users = db.execute("SELECT * FROM users WHERE approved=0").fetchall()
     db.close()
+
     return render_template("approve.html", users=users)
 
 @app.route("/approve_user/<int:user_id>")
@@ -180,15 +193,18 @@ def approve_user(user_id):
     db.execute("UPDATE users SET approved=1 WHERE id=?", (user_id,))
     db.commit()
     db.close()
-    return redirect("/approve")
 
+    flash("ユーザー承認しました", "success")
+    return redirect("/")
+
+# ---------------- ユーザー管理 ----------------
 @app.route("/users")
 def users():
     if session.get("role") != "admin":
         return "権限なし"
 
     db = get_db()
-    users = db.execute("SELECT id, username, role, approved FROM users").fetchall()
+    users = db.execute("SELECT id, name, role, approved FROM users").fetchall()
     db.close()
 
     return render_template("users.html", users=users)
@@ -203,19 +219,11 @@ def delete_user(user_id):
     db.commit()
     db.close()
 
+    flash("削除しました", "danger")
     return redirect("/users")
-
-flash("ログイン失敗しました")
-return redirect("/login")
-
-flash("登録申請しました")
-
-flash("商品を追加しました")
 
 # ---------------- 起動 ----------------
 if __name__ == "__main__":
     init_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-    
-    date = request.args.get("date")
