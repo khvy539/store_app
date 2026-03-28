@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     events: [
       {% for s in shifts %}
       {
-        title: "{{ s[2] }} {{ s[3] }}-{{ s[4] }}",
+        title: "{{ s[6] }} {{ s[3] }}-{{ s[4] }}",
         start: "{{ s[2] }}"
       },
       {% endfor %}
