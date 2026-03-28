@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
+from flask import flash
 import sqlite3, os
 
 app = Flask(__name__)
@@ -203,6 +204,13 @@ def delete_user(user_id):
     db.close()
 
     return redirect("/users")
+
+flash("ログイン失敗しました")
+return redirect("/login")
+
+flash("登録申請しました")
+
+flash("商品を追加しました")
 
 # ---------------- 起動 ----------------
 if __name__ == "__main__":
