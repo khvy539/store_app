@@ -1,28 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h4 class="mb-3">シフトカレンダー</h4>
-
 <div id="calendar" class="bg-white text-dark p-2 rounded"></div>
 
-<a href="/add_shift" class="btn btn-success mt-3 w-100">＋ シフト追加</a>
-
-<!-- FullCalendar -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  var calendarEl = document.getElementById('calendar');
-
-  var calendar = new FullCalendar.Calendar(calendarEl, {
+  var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
     initialView: 'dayGridMonth',
     height: "auto",
 
     events: [
       {% for s in shifts %}
       {
-        title: "{{ s[6] }} {{ s[3] }}-{{ s[4] }}",
+        title: "{{ s[6] if session['role']=='admin' else '' }} {{ s[3] }}-{{ s[4] }}",
         start: "{{ s[2] }}"
       },
       {% endfor %}
@@ -36,5 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
   calendar.render();
 });
 </script>
+
+<a href="/add_shift" class="btn btn-success mt-3 w-100">＋ シフト追加</a>
 
 {% endblock %}
