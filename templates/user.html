@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h4 class="mb-3">ユーザー管理</h4>
+
+{% for u in users %}
+<div class="card bg-secondary text-white mb-2">
+  <div class="card-body d-flex justify-content-between">
+    <div>
+      {{ u[1] }}（{{ u[2] }}）
+      {% if u[3] == 0 %}
+      <span class="badge bg-warning">未承認</span>
+      {% endif %}
+    </div>
+
+    <a href="/delete_user/{{ u[0] }}" class="btn btn-danger btn-sm">削除</a>
+  </div>
+</div>
+{% endfor %}
+
+{% endblock %}
