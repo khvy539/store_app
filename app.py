@@ -129,7 +129,8 @@ def shift():
     if session["role"] == "admin":
         shifts = db.execute("""
             SELECT shifts.*, users.username
-            FROM shifts JOIN users ON shifts.user_id = users.id
+            FROM shifts
+            JOIN users ON shifts.user_id = users.id
         """).fetchall()
     else:
         shifts = db.execute(
