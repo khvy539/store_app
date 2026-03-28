@@ -1,9 +1,29 @@
-<h2>シフト追加</h2>
-<form method="post">
-  <input type="date" name="date"><br>
-  <input type="time" name="start"><br>
-  <input type="time" name="end"><br>
-  <button>登録</button>
-</form>
+{% extends "base.html" %}
+{% block content %}
 
-date = request.args.get("date")
+<div class="card bg-secondary text-white shadow">
+  <div class="card-body">
+
+    <h4 class="mb-4 text-center">🗓 シフト登録</h4>
+
+    <form method="post">
+
+      <label class="form-label">日付</label>
+      <input type="date" name="date" class="form-control mb-3" value="{{ request.args.get('date','') }}">
+
+      <label class="form-label">開始時間</label>
+      <input type="time" name="start" class="form-control mb-3">
+
+      <label class="form-label">終了時間</label>
+      <input type="time" name="end" class="form-control mb-4">
+
+      <button class="btn btn-success w-100 btn-lg">登録する</button>
+
+    </form>
+
+  </div>
+</div>
+
+<a href="/shift" class="btn btn-outline-light mt-3 w-100">← 戻る</a>
+
+{% endblock %}
