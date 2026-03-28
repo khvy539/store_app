@@ -180,6 +180,29 @@ def approve_user(user_id):
     db.close()
     return redirect("/approve")
 
+@app.route("/users")
+def users():
+    if session.get("role") != "admin":
+        return "権限なし"
+
+    db = get_db()
+    users = db.execute("SELECT id, username, role, approved FROM users").fetchall()
+    db.close()
+
+    return render_template("users.html", users=users)
+
+@app.route("/delete_user/<int:user_id>")
+def delete_user(user_id):
+    if session.get("role") != "admin":
+        return "権限なし"
+
+    db = get_db()
+    db.execute("DELETE FROM users WHERE id=?", (user_id,))
+    db.commit()
+    db.close()
+
+    return redirect("/users")
+
 # ---------------- 起動 ----------------
 if __name__ == "__main__":
     init_db()
